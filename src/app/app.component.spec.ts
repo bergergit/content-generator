@@ -1,15 +1,23 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { NavigationComponent } from './navigation/navigation.component';
+import { MatButtonModule, MatIconModule, MatToolbarModule } from '@angular/material';
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule
+        RouterTestingModule, 
+        MatButtonModule,
+        MatIconModule,
+        MatToolbarModule
       ],
       declarations: [
-        AppComponent
+        AppComponent,
+        NavigationComponent
       ],
     }).compileComponents();
   }));
@@ -23,13 +31,13 @@ describe('AppComponent', () => {
   it(`should have as title 'content-generator'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('content-generator');
+    expect(app.title).toEqual('Content Generator');
   });
 
-  it('should render title in a h1 tag', () => {
+  it('should contain the app-navigation module', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to content-generator!');
+    expect(compiled.querySelector('app-navigation')).toBeTruthy();
   });
 });

@@ -1,0 +1,9 @@
+<br />
+<div fxLayout="row" fxLayoutAlign="center center" class="content">
+  <mat-card class="card">
+
+    <mat-card-title>Welcome to your content administration</mat-card-title>
+
+    <mat-card-content *ngIf="!auth.isAuthenticated()">Please, <a [routerLink]="" (click)="login()">sign in</a></mat-card-content>
+  </mat-card>
+</div>

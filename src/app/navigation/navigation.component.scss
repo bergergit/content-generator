@@ -1,0 +1,36 @@
+// Import theming functions
+@import '~@angular/material/theming';
+
+// mixin name will be used in main style.scss
+@mixin login-theme($theme) {
+
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  .toolbar-spacer {
+    flex: 1 1 auto;
+  }
+
+  .sidenav-container {
+    height: 100%;
+  }
+
+  .sidenav {
+    width: 200px;
+  }
+
+  .sidenav .mat-toolbar {
+    background: inherit;
+  }
+
+  .mat-toolbar.mat-primary {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .active {
+    color: $primary;
+  }
+
+}
