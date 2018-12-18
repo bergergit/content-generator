@@ -2,6 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import Auth0Lock from 'auth0-lock';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { ENGINE_METHOD_ALL } from 'constants';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class AuthService {
 
   isAdmin: boolean;
   userProfile: any;
+  loggedIn: boolean;
 
   public lock = new Auth0Lock(environment.auth.clientID, environment.auth.domain, {
     autoclose: true,
@@ -72,6 +74,7 @@ export class AuthService {
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
+    this.loggedIn = true;
 
     if (profile) {
       // console.log('User profile set', profile);
@@ -88,8 +91,11 @@ export class AuthService {
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
     localStorage.removeItem('profile');
+    this.loggedIn = false;
+    // this.lock.logout({clientID: environment.auth.clientID, returnTo: environment.auth.callbackURL});
     // Go back to the home route
     this.router.navigate(['/']);
+    
   }
 
   public isAuthenticated(): boolean {
@@ -115,4 +121,10 @@ export class AuthService {
     const roles = this.userProfile[environment.auth.namespace] || [];
     this.isAdmin = roles.indexOf('admin') > -1;
   }
+
+  get tokenValid(): boolean {
+    // Check if current time is past access token's expiration
+    return Date.now() < JSON.parse(localStorage.getItem('expires_at'));
+  }
+
 }
