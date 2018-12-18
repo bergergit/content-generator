@@ -13,6 +13,11 @@ describe('AuthGuard', () => {
   let injector: TestBed;
   let guard: AuthGuard;
   let authService: AuthService;
+  let fakeState = {
+    state: { 
+      url: ''
+    }
+  } as any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -40,26 +45,16 @@ describe('AuthGuard', () => {
   it('should return false if user not logged in', () => {
     expect(authService).toBeTruthy();
     spyOn(authService, 'tokenValid').and.returnValue(false);
-    let fakeState = {
-      state: { 
-        url: ''
-      }
-    } as any;
 
     expect(guard.canActivate(null, fakeState)).toBeFalsy();
   });
 
-    //it('should return false if user not logged in', inject([AuthServiceMockSignedOut], (authService: AuthService) => {
-    it('should return true if user is logged in and active', () => {
-        expect(authService).toBeTruthy();
-        spyOn(authService, 'tokenValid').and.returnValue(true);
-        spyOn(authService, 'loggedIn').and.returnValue(true);
-        let fakeState = {
-          state: { 
-            url: ''
-          }
-        } as any;
-    
-        expect(guard.canActivate(null, fakeState)).toBeTruthy();
-      });
+  //it('should return false if user not logged in', inject([AuthServiceMockSignedOut], (authService: AuthService) => {
+  it('should return true if user is logged in and active', () => {
+      expect(authService).toBeTruthy();
+      spyOn(authService, 'tokenValid').and.returnValue(true);
+      spyOn(authService, 'loggedIn').and.returnValue(true);
+  
+      expect(guard.canActivate(null, fakeState)).toBeTruthy();
+    });
 });

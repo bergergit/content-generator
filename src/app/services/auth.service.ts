@@ -2,7 +2,6 @@ import { Injectable, OnInit } from '@angular/core';
 import Auth0Lock from 'auth0-lock';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
-import { ENGINE_METHOD_ALL } from 'constants';
 
 @Injectable({
   providedIn: 'root'
@@ -49,9 +48,16 @@ export class AuthService {
       }
     });
     this.lock.on('authorization_error', (err) => {
+      this._clearRedirect();
       this.router.navigate(['/']);
       console.log(err);
       alert(`Error: ${err.error}. Check the console for further details.`);
+    });
+    this.lock.on('hide', () => {
+      console.log('Lock hidden');
+      if (!this.loggedIn) {
+        this.router.navigate(['/']);
+      } 
     });
   }
 
@@ -60,13 +66,35 @@ export class AuthService {
     this.lock.getUserInfo(authResult.accessToken, (err, profile) => {
       if (profile) {
         this._setSession(authResult, profile);
-        this.router.navigate(['/']);
-        // this._redirect();
+        // this.router.navigate(['/']);
+        this._redirect();
       } else if (err) {
         console.warn(`Error retrieving profile: ${err.error}`);
       }
     });
   }
+
+  private _redirect() {
+    // Redirect with or without 'tab' query parameter
+    // Note: does not support additional params besides 'tab'
+    if (localStorage.getItem('authRedirect')) {
+      const fullRedirect = decodeURI(localStorage.getItem('authRedirect'));
+      // const redirectArr = fullRedirect.split('?tab=');
+      // const navArr = [redirectArr[0] || '/'];
+      // const tabObj = redirectArr[1] ? { queryParams: { tab: redirectArr[1] }} : null;
+
+      console.log('fullRedirect', fullRedirect);
+
+      this.router.navigate([fullRedirect]);
+      this._clearRedirect();
+    }
+  }
+
+  private _clearRedirect() {
+    // Remove redirect from localStorage
+    localStorage.removeItem('authRedirect');
+  }
+
 
   private _setSession(authResult, profile): void {
     // Set the time that the access token will expire at
@@ -92,6 +120,7 @@ export class AuthService {
     localStorage.removeItem('expires_at');
     localStorage.removeItem('profile');
     this.loggedIn = false;
+    this._clearRedirect();
     // this.lock.logout({clientID: environment.auth.clientID, returnTo: environment.auth.callbackURL});
     // Go back to the home route
     this.router.navigate(['/']);
