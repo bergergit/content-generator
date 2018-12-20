@@ -3,7 +3,7 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as mongoose from 'mongoose';
 import * as methodOverride from 'method-override';
-import { api } from './api/routes';
+import { api } from './api/api';
 
 /**
  * MONGO DB INITIALIZATION

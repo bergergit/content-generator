@@ -7,7 +7,6 @@ import { Field } from '../models/Field';
 import * as jwt from 'express-jwt';
 import * as jwks from 'jwks-rsa';
 
-
 export const api = express();
 
 const jwtCheck = jwt({
