@@ -3,8 +3,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { MatButtonModule, MatIconModule, MatToolbarModule } from '@angular/material';
-import { DebugElement } from '@angular/core';
-import { By } from '@angular/platform-browser';
+
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 
 describe('AppComponent', () => {
   beforeEach(async(() => {

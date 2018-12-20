@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ContentComponent } from './content.component';
+import { MatExpansionModule, MatIconModule } from '@angular/material';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('ContentComponent', () => {
   let component: ContentComponent;
@@ -8,7 +10,12 @@ describe('ContentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ContentComponent ]
+      declarations: [ ContentComponent ],
+      imports: [
+        MatExpansionModule,
+        MatIconModule,
+        NoopAnimationsModule
+      ]
     })
     .compileComponents();
   }));
@@ -22,4 +29,5 @@ describe('ContentComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
 });

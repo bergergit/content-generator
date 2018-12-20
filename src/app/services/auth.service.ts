@@ -15,7 +15,7 @@ export class AuthService {
   public lock = new Auth0Lock(environment.auth.clientID, environment.auth.domain, {
     autoclose: true,
     auth: {
-      redirectUrl: environment.auth.callbackURL,
+      redirectUrl: environment.auth.callbackUrl,
       responseType: environment.auth.responseType,
       audience: environment.auth.audience,
       params: {
@@ -25,15 +25,29 @@ export class AuthService {
   });
 
   constructor(public router: Router) {
+    // If app auth token is not expired, request new token
+    if (JSON.parse(localStorage.getItem('expires_at')) > Date.now()) {
+      this.renewToken();
+    }
     if (localStorage.getItem('profile')) {
       this.userProfile = JSON.parse(localStorage.getItem('profile'));
       this._checkAdmin();
     }
-
   }
 
   public login(): void {
     this.lock.show();
+  }
+
+  renewToken() {
+    // Check for valid Auth0 session
+    this.lock.checkSession({}, (err, authResult) => {
+      if (authResult && authResult.accessToken) {
+        this._getProfile(authResult);
+      } else {
+        this._clearExpiration();
+      }
+    });
   }
 
   // Call this method in app.component.ts
@@ -143,6 +157,11 @@ export class AuthService {
         this.logout();
       }
     });
+  }
+
+  private _clearExpiration() {
+    // Remove token expiration from localStorage
+    localStorage.removeItem('expires_at');
   }
 
   private _checkAdmin() {

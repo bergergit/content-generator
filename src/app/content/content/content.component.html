@@ -1,3 +1,35 @@
-<p>
-  content works!
-</p>
+<!-- <div class="containerX" fxFlex.lg="80%" fxLayoutAlign="center" fxFlex> -->
+<div class="container" fxLayoutAlign="center">
+  <mat-accordion fxFlex.lg="80%" multi="true">
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+          <mat-panel-title>
+              This is the expansion title
+            </mat-panel-title>
+            <mat-panel-description>
+              This is a summary of the content
+            </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <p>This the expansion 1 content</p>
+
+      <mat-action-row>
+          <!-- <button mat-flat-button color="primary"><mat-icon>add</mat-icon> Add</button> -->
+        <button mat-flat-button color="primary"><mat-icon>add</mat-icon> <span class="label"> Add field</span></button>
+      </mat-action-row>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        This is the expansion 2 title
+      </mat-expansion-panel-header>
+
+      This the expansion 2 content
+
+    </mat-expansion-panel>
+
+  </mat-accordion>
+
+</div>

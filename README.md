@@ -63,5 +63,6 @@ Run commands below, each in a terminal window:
 npm run watch-ts
 ```
 ```
+export NODE_ENV=dev
 npm run watch-node
 ```
