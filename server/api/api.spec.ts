@@ -1,36 +1,69 @@
 
-import { expect } from 'chai'
+import * as mongoose from 'mongoose';
+import { expect, assert } from 'chai';
+import chai = require('chai');
+import chaiHttp = require('chai-http');
 import { before, after } from 'mocha';
-import { MongoClient, Db } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { app } from '../server';
+import { Menu } from '../models/Menu';
+import { Field } from '../models/Field';
 
-let con: MongoClient;
-let db: Db;
 let mongoServer: MongoMemoryServer;
+
+chai.use(chaiHttp);
+chai.should();
 
 before(async() => {
   mongoServer = new MongoMemoryServer();
-  const mongoUri = await mongoServer.getConnectionString();
-  con = await MongoClient.connect(mongoUri);
-  db = con.db(await mongoServer.getDbName());
+  let mongoUri = await mongoServer.getConnectionString();
+  await mongoose.connect(mongoUri, { useNewUrlParser: true });
 });
 
 after(async() => {
-  if (con) con.close();
-  if (mongoServer) mongoServer.stop();
+  mongoose.disconnect();
+  mongoServer.stop();
 });
 
+afterEach(async() => {
+  Menu.deleteMany({});
+  Field.deleteMany({});
+});
 
-describe('Single mongoServer', () => {
+describe('API', () => {
 
+  describe('MongoDB server', () => {
+    
+    it('should insert one Menu', async function() {
+      let count = await Menu.countDocuments();
 
-  it('should start mongo server', async () => {
-    expect(db).to.not.be.null;
-    const col = db.collection('test');
-    let dummyData = [{ a: 1 }, { b: 1 }];
-    const result = await col.insert(dummyData);
-    // expect(result.result).to.deep.equal(dummyData);
-    let colCount = await col.count({});
-    expect(colCount).to.equal(2);
+      count.should.equal(0);
+    });
   });
+
+
+  describe('Routes', () => {
+
+    it('should return 1 menu', async function() {
+      let dummyData = { 
+        restField: 'restField1', title: 'Title1' 
+      }
+      
+      try {
+        await new Menu(dummyData).save();
+        const count = await Menu.countDocuments();
+        let response = await chai.request(app).get('/api/menusAndFields');
+
+        count.should.equal(1);
+        response.should.have.status(200);
+        response.body.should.be.a('array');
+        response.body.length.should.be.eql(1);
+      } catch (err) {
+        console.log('err', err);
+        assert.fail('Error getting menus and Fields', err);
+      }
+
+    });
+  });
+
 });

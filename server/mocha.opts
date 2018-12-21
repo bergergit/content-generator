@@ -1,1 +1,1 @@
---compilers ts:../node_modules/ts-node/register **/*.spec.ts
+--require ../node_modules/ts-node/register **/*.spec.ts

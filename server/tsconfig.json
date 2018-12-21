@@ -18,9 +18,9 @@
       "es2018",
       "dom"
     ],
-    "types": [ "node", "mocha", "chai"],
+    // "types": [ "node", "mocha", "chai"],
   },
-  "include": [ "**/*.ts" ],
+  // "include": [ "./**/*.ts" ],
   
   "exclude": [
     "../node_modules",

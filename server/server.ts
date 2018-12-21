@@ -8,7 +8,7 @@ import { api } from './api/api';
 /**
  * MONGO DB INITIALIZATION
  */
-let connection = mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/contentgenerator", { useNewUrlParser: true }).then(
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/contentgenerator", { useNewUrlParser: true }).then(
     () => { console.info(`${new Date()} - Connected to MongoDB: ${process.env.MONGODB_URI}`); },
     err => { console.error('MongoDB Connection Error. Please make sure that', process.env.MONGODB_URI, 'is running.'); }
 );
@@ -16,7 +16,7 @@ let connection = mongoose.connect(process.env.MONGODB_URI || "mongodb://localhos
 /**
  * APP INITIALIZATION
  */
-const app = express();
+export const app = express();
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
@@ -35,3 +35,4 @@ app.use('/api', api);
 const port = process.env.PORT || '8083';
 app.set('port', port);
 app.listen(port, () => console.log(`Server running on localhost:${port}`));
+
