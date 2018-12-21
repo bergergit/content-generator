@@ -5,7 +5,7 @@ import chai = require('chai');
 import chaiHttp = require('chai-http');
 import { before, after } from 'mocha';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { app } from '../server';
+import { server } from '../app';
 import { Menu } from '../models/Menu';
 import { Field } from '../models/Field';
 
@@ -14,15 +14,22 @@ let mongoServer: MongoMemoryServer;
 chai.use(chaiHttp);
 chai.should();
 
+const request = chai.request.agent(server);
+
 before(async() => {
   mongoServer = new MongoMemoryServer();
   let mongoUri = await mongoServer.getConnectionString();
-  await mongoose.connect(mongoUri, { useNewUrlParser: true });
+  const db = await mongoose.connect(mongoUri, { useNewUrlParser: true });
 });
 
+
+
 after(async() => {
-  mongoose.disconnect();
-  mongoServer.stop();
+  await request.close();
+  await mongoose.disconnect();
+  await mongoServer.stop();
+  
+  
 });
 
 afterEach(async() => {
@@ -33,7 +40,7 @@ afterEach(async() => {
 describe('API', () => {
 
   describe('MongoDB server', () => {
-    
+
     it('should insert one Menu', async function() {
       let count = await Menu.countDocuments();
 
@@ -47,23 +54,49 @@ describe('API', () => {
     it('should return 1 menu', async function() {
       let dummyData = { 
         restField: 'restField1', title: 'Title1' 
-      }
+      } 
       
       try {
-        await new Menu(dummyData).save();
+        const doc = await new Menu(dummyData).save();
         const count = await Menu.countDocuments();
-        let response = await chai.request(app).get('/api/menusAndFields');
+        let response = await request.get('/api/menusAndFields');
+
+        doc.should.not.be.null;
 
         count.should.equal(1);
         response.should.have.status(200);
         response.body.should.be.a('array');
         response.body.length.should.be.eql(1);
+
       } catch (err) {
-        console.log('err', err);
-        assert.fail('Error getting menus and Fields', err);
+        assert.fail('', '', 'Error getting menus and Fields');
       }
 
     });
+
+    it('should insert 1 menu', async function() {
+      let dummyData = { 
+        restField: 'restField1', title: 'Title1' 
+      }
+
+      try {
+        let response = await request.post('/api/menu').send({
+          restField: 'restField2',
+          title: 'My title'
+        });
+
+        response.should.not.be.null;
+        response.body.restField.should.be('restField2');
+        response.body.title.should.be('My title');
+      } catch (err) {
+        assert.fail('', '', 'Error inserting menu'); 
+      }
+    });
+
+    it ('should exit', () => {
+      expect(true).to.be.true;
+    });
+
   });
 
 });

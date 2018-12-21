@@ -1,1 +1,1 @@
---require ../node_modules/ts-node/register **/*.spec.ts
+--watch-extensions tsx,ts --require ../node_modules/ts-node/register **/*.spec.ts
