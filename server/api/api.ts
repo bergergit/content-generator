@@ -22,16 +22,27 @@ const jwtCheck = jwt({
 });
 
 // GET all menus and fields
-api.get('/menusAndFields', (req, res) => { 
-    Menu.find({}).populate('menus').exec((err: any, menus) => {
-        if (err) { 
-            return res.status(500).send({message: err.message});
-        }
-
+api.get('/menusAndFields', async (req, res) => { 
+    try {
+        let menus = await Menu.find({}).populate('menus').exec();
         res.send(menus);
-    });
+    } catch (err) {
+        return res.status(500).send({message: err.message});
+    }
+    // let menus = Menu.find({}).populate('menus').exec((err: any, menus) => {
+    //     if (err) { 
+    //         return res.status(500).send({message: err.message});
+    //     }
+
+    //     res.send(menus);
+    // });
 });
 
-api.post('/users', (req, res) => { 
-    res.send({body: req.body});
+api.post('/menu', async (req, res) => { 
+    try {
+        let savedMenu = await new Menu(req.body).save();
+        res.send(savedMenu);
+    } catch (err) {
+        return res.status(500).send({message: err.message});
+    }
 });

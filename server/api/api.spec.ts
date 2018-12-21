@@ -22,14 +22,10 @@ before(async() => {
   const db = await mongoose.connect(mongoUri, { useNewUrlParser: true });
 });
 
-
-
 after(async() => {
   await request.close();
   await mongoose.disconnect();
   await mongoServer.stop();
-  
-  
 });
 
 afterEach(async() => {
@@ -86,9 +82,10 @@ describe('API', () => {
         });
 
         response.should.not.be.null;
-        response.body.restField.should.be('restField2');
-        response.body.title.should.be('My title');
+        response.body.restField.should.be.equal('restField2');
+        response.body.title.should.be.equal('My title');
       } catch (err) {
+        console.log(err);
         assert.fail('', '', 'Error inserting menu'); 
       }
     });
