@@ -5,7 +5,7 @@ import chai = require('chai');
 import chaiHttp = require('chai-http');
 import { before, after } from 'mocha';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { server } from '../app';
+import { Server } from '../app';
 import { Menu } from '../models/Menu';
 import { Field } from '../models/Field';
 
@@ -14,7 +14,10 @@ let mongoServer: MongoMemoryServer;
 chai.use(chaiHttp);
 chai.should();
 
-const request = chai.request.agent(server);
+let server = new Server();
+server.initialize();
+
+const request = chai.request.agent(server.expressApp);
 
 before(async() => {
   mongoServer = new MongoMemoryServer();
@@ -23,6 +26,7 @@ before(async() => {
 });
 
 after(async() => {
+  await server.close();
   await request.close();
   await mongoose.disconnect();
   await mongoServer.stop();
@@ -65,6 +69,7 @@ describe('API', () => {
         response.body.length.should.be.eql(1);
 
       } catch (err) {
+        console.log(err);
         assert.fail('', '', 'Error getting menus and Fields');
       }
 

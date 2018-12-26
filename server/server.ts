@@ -4,7 +4,7 @@
 import * as mongoose from 'mongoose';
 // import * as methodOverride from 'method-override';
 // import { api } from './api/api';
-import { server } from './app';
+import { Server } from './app';
 
 /**
  * MONGO DB INITIALIZATION
@@ -14,6 +14,4 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/contentgenerato
     err => { console.error('MongoDB Connection Error. Please make sure that', process.env.MONGODB_URI, 'is running.'); }
 );
 
-server;
-
-
+new Server().initialize();

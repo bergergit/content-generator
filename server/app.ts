@@ -8,22 +8,39 @@ import { api } from './api/api';
  * APP INITIALIZATION
  */
 // export const app = express();
-const app = express();
-app.use(bodyParser.json());
-app.use(express.static(__dirname));
+export class Server { 
+    private app: any;
+    private listener: any;
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(methodOverride('X-HTTP-Method-Override'));
-app.use(cors());
+    constructor() {
+        this.app = express();
+        this.app.use(bodyParser.json());
+        this.app.use(express.static(__dirname));
+    
+        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(methodOverride('X-HTTP-Method-Override'));
+        this.app.use(cors());
+    
+        /**
+         * APP FILES
+         */
+        this.app.use('/api', api);
+    }
 
-/**
- * APP FILES
- */
-app.use('/api', api);
+    public get expressApp() {
+        return this.app;
+    }
 
-/**
- * SERVER INITIALIZATION
- */
-const port = process.env.PORT || '8083';
-app.set('port', port);
-export const server = app.listen(port, () => console.log(`Server running on localhost:${port}`));
+    public initialize() {
+        /**
+         * SERVER INITIALIZATION
+         */
+        const port = process.env.PORT || '8083';
+        this.app.set('port', port);
+        this.listener = this.app.listen(port, () => console.log(`Server running on localhost:${port}`))
+    }
+
+    public close() {
+        return this.listener.close();
+    }
+}
